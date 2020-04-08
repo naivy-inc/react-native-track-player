@@ -295,7 +295,11 @@ public abstract class ExoPlayback<T extends Player> implements EventListener, Me
             } else if(Utils.isPaused(state) && !Utils.isPaused(previousState)) {
                 manager.onPause();
             } else if(Utils.isStopped(state) && !Utils.isStopped(previousState)) {
+                 if(getCurrentTrack() != null && getCurrentTrack().id.equals("audio-ads")){
+
+                } else {
                 manager.onStop();
+                }
             }
 
             manager.onStateChange(state);
