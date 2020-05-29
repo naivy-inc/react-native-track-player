@@ -116,11 +116,11 @@ public class Utils {
     }
 
     public static boolean isPaused(int state) {
-        return state == PlaybackStateCompat.STATE_PAUSED || state == PlaybackStateCompat.STATE_CONNECTING;
+        return state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_PAUSED || state == PlaybackStateCompat.STATE_CONNECTING;
     }
 
     public static boolean isStopped(int state) {
-        return state == PlaybackStateCompat.STATE_NONE || state == PlaybackStateCompat.STATE_STOPPED;
+        return state == PlaybackStateCompat.STATE_STOPPED;
     }
 
     public static RatingCompat getRating(Bundle data, String key, int ratingType) {
