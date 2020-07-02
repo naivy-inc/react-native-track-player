@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.session.MediaButtonReceiver;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.media.session.MediaButtonReceiver;
 
 import android.support.v4.media.session.MediaSessionCompat;
 import com.facebook.react.HeadlessJsTaskService;
@@ -75,15 +77,24 @@ public class MusicService extends HeadlessJsTaskService {
 
             // Checks whether there is a React activity
             if(reactContext == null || !reactContext.hasCurrentActivity()) {
-                String channel = Utils.getNotificationChannel((Context) this);
-
+                Notification notification = Utils.createBlankSetupNotification((Context) this);
                 // Sets the service to foreground with an empty notification
-                startForeground(1, new NotificationCompat.Builder(this, channel).build());
+                startForeground(1, notification);
                 // Stops the service right after
                 stopSelf();
             }
         }
     }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Notification notification = Utils.createBlankSetupNotification(this);
+        startForeground(1, notification);
+        manager = new MusicManager(this);
+        handler = new Handler();
+    }
+
 
     @Nullable
     @Override
@@ -107,9 +118,6 @@ public class MusicService extends HeadlessJsTaskService {
 
             return START_NOT_STICKY;
         }
-
-        manager = new MusicManager(this);
-        handler = new Handler();
 
         super.onStartCommand(intent, flags, startId);
         return START_STICKY;

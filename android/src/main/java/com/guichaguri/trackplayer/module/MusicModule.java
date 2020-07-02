@@ -10,6 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import androidx.core.content.ContextCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.facebook.react.bridge.*;
 import com.google.android.exoplayer2.C;
 import com.guichaguri.trackplayer.service.MusicBinder;
@@ -103,7 +105,7 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
         // Binds the service to get a MediaWrapper instance
         Intent intent = new Intent(context, MusicService.class);
-        context.startService(intent);
+        ContextCompat.startForegroundService(context, intent);
         intent.setAction(Utils.CONNECT_INTENT);
         context.bindService(intent, this, 0);
 

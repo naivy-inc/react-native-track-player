@@ -35,7 +35,7 @@ android {
 
         versionCode 1
         versionName "1.0"
-        
+
         consumerProguardFiles 'proguard-rules.txt'
     }
 
@@ -60,8 +60,8 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
-    
-    def exoPlayerVersion = safeExtGet("exoPlayerVersion", '2.10.1');
+
+    def exoPlayerVersion = safeExtGet("exoPlayerVersion", '2.11.4');
 
     // ExoPlayer Core
     implementation "com.google.android.exoplayer:exoplayer-core:${exoPlayerVersion}"
