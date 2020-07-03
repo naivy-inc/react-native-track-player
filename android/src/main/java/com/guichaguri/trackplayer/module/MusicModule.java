@@ -92,11 +92,15 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
         }
     }
 
+    private boolean isBinderReady() {
+        return binder != null && binder.isReadyForPost();
+    }
+
     /**
      * Waits for a connection to the service and/or runs the {@link Runnable} in the player thread
      */
     private void waitForConnection(Runnable r) {
-        if(binder != null) {
+        if(isBinderReady()) {
             binder.post(r);
             return;
         } else {
@@ -117,7 +121,7 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
     }
 
     private void runOnConnectionOrReject(final Promise callback, Runnable r) {
-        if(binder != null) {
+        if(isBinderReady()) {
             binder.post(r);
         } else {
             callback.reject("playback", "The playback is not initialized");
@@ -174,7 +178,7 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
     @ReactMethod
     public void isServiceRunning(final Promise promise) {
-        promise.resolve(binder != null);
+        promise.resolve(isBinderReady());
     }
 
     @ReactMethod
@@ -374,10 +378,10 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
     @ReactMethod
     public synchronized void getVolume(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(null);
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> callback.resolve(binder.getPlayback().getVolume()));
+        } else {
+            callback.resolve(null);
         }
     }
 
@@ -391,18 +395,16 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
     @ReactMethod
     public synchronized void getRate(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(null);
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> callback.resolve(binder.getPlayback().getRate()));
+        } else {
+            callback.resolve(null);
         }
     }
 
     @ReactMethod
     public synchronized void getTrack(final String id, final Promise callback) {
-        if(binder == null) {
-            callback.resolve(null);
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 List<Track> tracks = binder.getPlayback().getQueue();
 
@@ -415,14 +417,14 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
                 callback.resolve(null);
             });
+        } else {
+            callback.resolve(null);
         }
     }
 
     @ReactMethod
     public synchronized void getQueue(Promise callback) {
-        if(binder == null) {
-            callback.resolve(new ArrayList());
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 List queue = new ArrayList();
                 List<Track> tracks = binder.getPlayback().getQueue();
@@ -433,14 +435,14 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
                 callback.resolve(Arguments.fromList(queue));
             });
+        } else {
+            callback.resolve(new ArrayList());
         }
     }
 
     @ReactMethod
     public synchronized void getCurrentTrack(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(null);
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 Track track = binder.getPlayback().getCurrentTrack();
 
@@ -450,14 +452,14 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
                     callback.resolve(track.id);
                 }
             });
+        } else {
+            callback.resolve(null);
         }
     }
 
     @ReactMethod
     public synchronized void getDuration(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(Utils.toSeconds(0));
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 long duration = binder.getPlayback().getDuration();
 
@@ -467,14 +469,14 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
                     callback.resolve(Utils.toSeconds(duration));
                 }
             });
+        } else {
+            callback.resolve(Utils.toSeconds(0));
         }
     }
 
     @ReactMethod
     public synchronized void getBufferedPosition(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(Utils.toSeconds(0));
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 long position = binder.getPlayback().getBufferedPosition();
 
@@ -484,15 +486,15 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
                     callback.resolve(Utils.toSeconds(position));
                 }
             });
+        } else {
+            callback.resolve(Utils.toSeconds(0));
         }
     }
 
     @ReactMethod
     public synchronized void getPosition(final Promise callback) {
         // TODO Probably should just return null instead of rejection, but kept as it is a breaking change
-        if(binder == null) {
-            callback.reject("unknown", "Unknown position");
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> {
                 long position = binder.getPlayback().getPosition();
 
@@ -502,15 +504,17 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
                     callback.resolve(Utils.toSeconds(position));
                 }
             });
+        } else {
+            callback.reject("unknown", "Unknown position");
         }
     }
 
     @ReactMethod
     public synchronized void getState(final Promise callback) {
-        if(binder == null) {
-            callback.resolve(PlaybackStateCompat.STATE_NONE);
-        } else {
+        if(isBinderReady()) {
             binder.post(() -> callback.resolve(binder.getPlayback().getState()));
+        } else {
+            callback.resolve(PlaybackStateCompat.STATE_NONE);
         }
     }
 }
