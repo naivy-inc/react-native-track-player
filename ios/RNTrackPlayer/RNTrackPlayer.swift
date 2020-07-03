@@ -287,7 +287,7 @@ public class RNTrackPlayer: RCTEventEmitter {
     }
 
     @objc(isServiceRunning:rejecter:)
-    public func isServiceRunning(resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
+    public func isServiceRunning(_ resolve: RCTPromiseResolveBlock, reject: RCTPromiseRejectBlock) {
         // TODO That is probably always true
         resolve(player != nil)
     }
