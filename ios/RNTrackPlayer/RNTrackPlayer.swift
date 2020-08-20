@@ -437,8 +437,9 @@ public class RNTrackPlayer: RCTEventEmitter {
         print("Resetting player.")
         player.stop()
         resolve(NSNull())
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             UIApplication.shared.endReceivingRemoteControlEvents();
+            MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]
         }
     }
 
